@@ -1,0 +1,22 @@
+git clone https://github.com/KasperNotAGhost/Adventure-game
+cd adventure-game
+
+git checkout -b dev
+
+mkdir game
+mkdir assets
+
+touch game/main.py
+touch game/player.py
+touch game/npc.py
+touch game/map.py
+touch game/items.py
+touch game/inventory.py
+touch game/minigame.py
+
+touch assets/map1.txt
+touch assets/map2.txt
+
+git add .
+git commit -m "Initial project structure"
+git push origin dev
