@@ -2,31 +2,42 @@
 
 class Program
 {
-    static Player player = new Player(1, 5); 
+    static Player player = new Player(1, 5);
     static int currentMap = 0;
     static bool gameRunning = true;
+    static char[,] map = Maps.GetMap(currentMap);
 
     static void Main()
     {
         Console.CursorVisible = false;
 
         while (gameRunning)
-    {
-        Console.SetCursorPosition(0, 0); // zamiast Console.Clear()
-        DrawMap();
-        ConsoleKeyInfo key = Console.ReadKey(true);
-        Movement.MovePlayer(key.Key, player, ref currentMap, ref gameRunning);
-    }
+        {
+            Console.Clear();
+
+            if (Movement.IsInventoryOpen)
+            {
+                DrawInventory();
+                var key = Console.ReadKey(true);
+                Movement.MovePlayer(key.Key, player, ref currentMap, ref gameRunning, ref map);
+            }
+            else
+            {
+                DrawMap();
+                Movement.DrawWoodOnMap();
+
+                var key = Console.ReadKey(true);
+                Movement.MovePlayer(key.Key, player, ref currentMap, ref gameRunning, ref map);
+            }
+        }
 
         Console.Clear();
-        Console.WriteLine("Utopiłeś się w rzece. Naucz się pływać!");
+        Console.WriteLine("Game Over!");
         Console.ReadKey();
     }
 
     static void DrawMap()
     {
-        var map = Maps.GetMap(currentMap);
-
         for (int y = 0; y < map.GetLength(0); y++)
         {
             for (int x = 0; x < map.GetLength(1); x++)
@@ -38,5 +49,23 @@ class Program
             }
             Console.WriteLine();
         }
+    }
+
+    static void DrawInventory()
+    {
+        Console.WriteLine("== EKWIPUNEK ==");
+        var items = player.Inventory.GetItems();
+
+        // 3 sloty
+        for (int i = 0; i < 3; i++)
+        {
+            if (i == 0 && items.ContainsKey("Wood") && items["Wood"] > 0)
+                Console.WriteLine("[t]");  // drewno
+            else
+                Console.WriteLine("[ ]");  // puste miejsce
+        }
+
+        Console.WriteLine();
+        Console.WriteLine("Naciśnij E, by wyrzucić drewno (jeśli masz) lub dowolny inny klawisz, by wyjść.");
     }
 }
