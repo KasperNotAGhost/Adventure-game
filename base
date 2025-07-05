@@ -20,3 +20,5 @@ touch assets/map2.txt
 git add .
 git commit -m "Initial project structure"
 git push origin dev
+
+eloelo ziomeczki
