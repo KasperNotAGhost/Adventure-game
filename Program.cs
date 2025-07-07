@@ -1,71 +1,104 @@
-﻿using System;
+using System;
+using System.Threading;
 
 class Program
 {
-    static Player player = new Player(1, 5);
-    static int currentMap = 0;
-    static bool gameRunning = true;
-    static char[,] map = Maps.GetMap(currentMap);
-
     static void Main()
     {
         Console.CursorVisible = false;
+        int mapIndex = 0;
+        bool gameRunning = true;
+        bool npcInConversation = false;
+
+        Player player = new Player(1, 5);
+        char[,] map = Maps.GetMap(mapIndex);
+        
+        // Inicjalizacja NPC jako "pustego" (poza mapą)
+        NPC npc = new NPC(-1, -1);
+
+        BaconSpawner.SpawnBaconRandomly(); // losowy boczek
 
         while (gameRunning)
         {
+            map = Maps.GetMap(mapIndex);
+
+            // Aktualizacja NPC przy zmianie mapy
+            if (mapIndex == 0)
+            {
+                npc.X = 2;
+                npc.Y = 5;
+            }
+            else
+            {
+                // Ukryj NPC poza mapą, by nie był widoczny i nie generował błędów
+                npc.X = -1;
+                npc.Y = -1;
+            }
+
             Console.Clear();
+            MapRenderer.Draw(map, player, npc);
+            UI.ShowInventory(player);
+            UI.ShowStamina(player);
 
-            if (Movement.IsInventoryOpen)
+            if (player.Stamina <= 0)
             {
-                DrawInventory();
-                var key = Console.ReadKey(true);
-                Movement.MovePlayer(key.Key, player, ref currentMap, ref gameRunning, ref map);
+                Console.Clear();
+                Console.WriteLine("Upadasz ze zmęczenia. Gra zakończona.");
+                break;
+            }
+
+            if (player.X == npc.X && player.Y == npc.Y)
+            {
+                if (!npcInConversation)
+                {
+                    npc.Interact();
+                    npcInConversation = true;
+                }
             }
             else
             {
-                DrawMap();
-                Movement.DrawWoodOnMap();
-
-                var key = Console.ReadKey(true);
-                Movement.MovePlayer(key.Key, player, ref currentMap, ref gameRunning, ref map);
+                npcInConversation = false;
             }
-        }
 
-        Console.Clear();
-        Console.WriteLine("Game Over!");
-        Console.ReadKey();
-    }
-
-    static void DrawMap()
-    {
-        for (int y = 0; y < map.GetLength(0); y++)
-        {
-            for (int x = 0; x < map.GetLength(1); x++)
+            if (Console.KeyAvailable)
             {
-                if (x == player.X && y == player.Y)
-                    Console.Write('@');
-                else
-                    Console.Write(map[y, x]);
+                ConsoleKey key = Console.ReadKey(true).Key;
+
+                if (npcInConversation)
+                {
+                    // Wyjście z rozmowy przy dowolnym wciśnięciu klawisza (np. E lub Esc)
+                    if (key == ConsoleKey.E || key == ConsoleKey.Escape)
+                    {
+                        npcInConversation = false;
+                        Movement.MovePlayerToNearestFreeTile(player, map);
+                    }
+                    // W trakcie rozmowy ignorujemy inne klawisze
+                    continue;
+                }
+
+                switch (key)
+                {
+                    case ConsoleKey.R:
+                        Movement.TryChopTree(player, map);
+                        break;
+                    case ConsoleKey.E:
+                        UI.ToggleInventory();
+                        break;
+                    case ConsoleKey.Q:
+                        Movement.TryDropItem(player, map);
+                        break;
+                    case ConsoleKey.U:
+                        Movement.TryEatBacon(player);
+                        break;
+                    default:
+                        Movement.MovePlayer(key, player, ref mapIndex, ref gameRunning);
+                        break;
+                }
             }
-            Console.WriteLine();
-        }
-    }
 
-    static void DrawInventory()
-    {
-        Console.WriteLine("== EKWIPUNEK ==");
-        var items = player.Inventory.GetItems();
-
-        // 3 sloty
-        for (int i = 0; i < 3; i++)
-        {
-            if (i == 0 && items.ContainsKey("Wood") && items["Wood"] > 0)
-                Console.WriteLine("[t]");  // drewno
-            else
-                Console.WriteLine("[ ]");  // puste miejsce
+            Thread.Sleep(100);
         }
 
-        Console.WriteLine();
-        Console.WriteLine("Naciśnij E, by wyrzucić drewno (jeśli masz) lub dowolny inny klawisz, by wyjść.");
+        Console.SetCursorPosition(0, 20);
     }
 }

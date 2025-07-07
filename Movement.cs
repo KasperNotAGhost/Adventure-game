@@ -2,32 +2,8 @@ using System;
 
 public static class Movement
 {
-    private static System.Collections.Generic.List<(int x, int y)> woodOnMap = new System.Collections.Generic.List<(int x, int y)>();
-
-    // Stan wyświetlania ekwipunku
-    public static bool IsInventoryOpen = false;
-
-    public static void MovePlayer(ConsoleKey key, Player player, ref int mapIndex, ref bool gameRunning, ref char[,] map)
+    public static void MovePlayer(ConsoleKey key, Player player, ref int mapIndex, ref bool gameRunning)
     {
-        if (IsInventoryOpen)
-        {
-            // W ekwipunku naciskanie dowolnego klawisza zamyka ekwipunek
-            if (key == ConsoleKey.E)
-            {
-                // Jeśli masz drewno, wyrzuć je
-                if (player.Inventory.Remove("Wood"))
-                {
-                    TryDropWood(player, map);
-                }
-                IsInventoryOpen = false;
-            }
-            else
-            {
-                IsInventoryOpen = false;
-            }
-            return;
-        }
-
         int newX = player.X;
         int newY = player.Y;
 
@@ -37,43 +13,53 @@ public static class Movement
             case ConsoleKey.S: newY++; break;
             case ConsoleKey.A: newX--; break;
             case ConsoleKey.D: newX++; break;
-            case ConsoleKey.R:
-                TryChopTree(player, map);
-                return;
-            case ConsoleKey.E:
-                // Otwórz ekwipunek
-                IsInventoryOpen = true;
-                return;
-            default:
-                return;
+            default: return;
         }
 
-        // granice
+        var map = Maps.GetMap(mapIndex);
+
         if (newY < 0 || newY >= map.GetLength(0) || newX < 0 || newX >= map.GetLength(1))
             return;
 
         char target = map[newY, newX];
 
-        // Kolizje
-        if (target == '#' || target == 'T' || target == '~') return;
+        if (target == '#') return;
 
-        // Przejście mapy
+        if (target == '~')
+        {
+            Console.Clear();
+            Console.WriteLine("Nie umiesz pływać i utopiłeś się!\nKoniec gry.");
+            gameRunning = false;
+            Console.ReadKey();
+            return;
+        }
+
+        if (target == 'T') return;
+
         if (target == 'P')
         {
             mapIndex = (mapIndex + 1) % Maps.AllMaps.Count;
             player.X = 1;
-            player.Y = 1;
-            map = Maps.GetMap(mapIndex);
-            woodOnMap.Clear();
+            player.Y = 5;
             return;
         }
 
-        // Podnoszenie drewna (małe t)
-        if (target == 't')
+        if (target == 't' || target == 'B')
         {
-            map[newY, newX] = ' ';          // usuń drewno z mapy
-            player.Inventory.Add("Wood");   // dodaj drewno do ekwipunku
-            // nie ruszamy pozycji gracza, bo stoi na tym miejscu
+            player.AddItem(target == 't' ? "Wood" : "Bacon");
+            map[newY, newX] = ' ';
+        }
+
+        if (player.Stamina > 0)
+        {
+            player.Stamina -= 1;
+        }
+        else
+        {
+            Console.Clear();
+            Console.WriteLine("Zemdlałeś ze zmęczenia.\nKoniec gry.");
+            gameRunning = false;
+            Console.ReadKey();
             return;
         }
 
@@ -81,73 +67,94 @@ public static class Movement
         player.Y = newY;
     }
 
-    private static void TryChopTree(Player player, char[,] map)
+    public static void TryChopTree(Player player, char[,] map)
     {
-        if (!player.HasAxe) return;
-
-        var adjacentPositions = new (int x, int y)[]
+        (int x, int y)[] directions = new (int, int)[]
         {
-            (player.X + 1, player.Y),
-            (player.X - 1, player.Y),
-            (player.X, player.Y + 1),
             (player.X, player.Y - 1),
+            (player.X, player.Y + 1),
+            (player.X - 1, player.Y),
+            (player.X + 1, player.Y)
         };
 
-        foreach (var pos in adjacentPositions)
+        foreach (var (x, y) in directions)
         {
-            if (pos.x < 0 || pos.x >= map.GetLength(1) || pos.y < 0 || pos.y >= map.GetLength(0))
-                continue;
-
-            if (map[pos.y, pos.x] == 'T')
+            if (x >= 0 && x < map.GetLength(1) && y >= 0 && y < map.GetLength(0))
             {
-                map[pos.y, pos.x] = 't'; // ścięcie drzewa na drewno
-                return;
+                if (map[y, x] == 'T')
+                {
+                    map[y, x] = 't';
+                    break;
+                }
             }
         }
     }
 
-    private static void TryDropWood(Player player, char[,] map)
+    public static void TryDropItem(Player player, char[,] map)
     {
-        var positionsToTry = new (int x, int y)[]
+        if (player.Inventory.Count == 0) return;
+
+        (int x, int y)[] dropPositions = new (int, int)[]
         {
             (player.X + 1, player.Y),
             (player.X - 1, player.Y),
-            (player.X, player.Y + 1),
             (player.X, player.Y - 1),
+            (player.X, player.Y + 1)
         };
 
-        foreach (var pos in positionsToTry)
+        foreach (var (x, y) in dropPositions)
         {
-            if (pos.x < 0 || pos.x >= map.GetLength(1) || pos.y < 0 || pos.y >= map.GetLength(0))
-                continue;
-
-            char target = map[pos.y, pos.x];
-            if (target == ' ' && !IsWoodAtPosition(pos.x, pos.y))
+            if (x >= 0 && x < map.GetLength(1) && y >= 0 && y < map.GetLength(0))
             {
-                if (target == '#' || target == '~' || target == '=')
-                    continue;
-
-                woodOnMap.Add((pos.x, pos.y));
-                return;
+                if (map[y, x] == ' ')
+                {
+                    // sprawdź, czy nie ma już obiektu w tym miejscu
+                    bool alreadyOccupied = map[y, x] == 't' || map[y, x] == 'B';
+                    if (!alreadyOccupied)
+                    {
+                        string item = player.Inventory[0];
+                        player.RemoveItem(item);
+                        map[y, x] = item == "Wood" ? 't' : item == "Bacon" ? 'B' : ' ';
+                        break;
+                    }
+                }
             }
         }
-
-        // Brak miejsca - drewno po prostu zniknie 
     }
 
-    public static bool IsWoodAtPosition(int x, int y)
+    public static void TryEatBacon(Player player)
     {
-        foreach (var w in woodOnMap)
-            if (w.x == x && w.y == y) return true;
-        return false;
-    }
-
-    public static void DrawWoodOnMap()
-    {
-        foreach (var w in woodOnMap)
+        if (player.Inventory.Contains("Bacon"))
         {
-            Console.SetCursorPosition(w.x, w.y);
-            Console.Write('t');
+            player.Stamina += 30;
+            if (player.Stamina > player.MaxStamina)
+                player.Stamina = player.MaxStamina;
+
+            player.RemoveItem("Bacon");
+        }
+    }
+
+    public static void MovePlayerToNearestFreeTile(Player player, char[,] map)
+    {
+        (int x, int y)[] directions = new (int, int)[]
+        {
+            (player.X + 1, player.Y),
+            (player.X - 1, player.Y),
+            (player.X, player.Y - 1),
+            (player.X, player.Y + 1)
+        };
+
+        foreach (var (x, y) in directions)
+        {
+            if (x >= 0 && x < map.GetLength(1) && y >= 0 && y < map.GetLength(0))
+            {
+                if (map[y, x] == ' ')  // wolne pole
+                {
+                    player.X = x;
+                    player.Y = y;
+                    break;
+                }
+            }
         }
     }
 }

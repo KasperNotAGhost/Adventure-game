@@ -1,0 +1,15 @@
+C:\Users\Szymon\Desktop\portfolio\Code\c#\CansoleApp\Adventure-game\bin\Debug\net9.0\Adventure-game.exe
+C:\Users\Szymon\Desktop\portfolio\Code\c#\CansoleApp\Adventure-game\bin\Debug\net9.0\Adventure-game.deps.json
+C:\Users\Szymon\Desktop\portfolio\Code\c#\CansoleApp\Adventure-game\bin\Debug\net9.0\Adventure-game.runtimeconfig.json
+C:\Users\Szymon\Desktop\portfolio\Code\c#\CansoleApp\Adventure-game\bin\Debug\net9.0\Adventure-game.dll
+C:\Users\Szymon\Desktop\portfolio\Code\c#\CansoleApp\Adventure-game\bin\Debug\net9.0\Adventure-game.pdb
+C:\Users\Szymon\Desktop\portfolio\Code\c#\CansoleApp\Adventure-game\obj\Debug\net9.0\Adventure-game.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Szymon\Desktop\portfolio\Code\c#\CansoleApp\Adventure-game\obj\Debug\net9.0\Adventure-game.AssemblyInfoInputs.cache
+C:\Users\Szymon\Desktop\portfolio\Code\c#\CansoleApp\Adventure-game\obj\Debug\net9.0\Adventure-game.AssemblyInfo.cs
+C:\Users\Szymon\Desktop\portfolio\Code\c#\CansoleApp\Adventure-game\obj\Debug\net9.0\Adventure-game.csproj.CoreCompileInputs.cache
+C:\Users\Szymon\Desktop\portfolio\Code\c#\CansoleApp\Adventure-game\obj\Debug\net9.0\Adventure-game.sourcelink.json
+C:\Users\Szymon\Desktop\portfolio\Code\c#\CansoleApp\Adventure-game\obj\Debug\net9.0\Adventure-game.dll
+C:\Users\Szymon\Desktop\portfolio\Code\c#\CansoleApp\Adventure-game\obj\Debug\net9.0\refint\Adventure-game.dll
+C:\Users\Szymon\Desktop\portfolio\Code\c#\CansoleApp\Adventure-game\obj\Debug\net9.0\Adventure-game.pdb
+C:\Users\Szymon\Desktop\portfolio\Code\c#\CansoleApp\Adventure-game\obj\Debug\net9.0\Adventure-game.genruntimeconfig.cache
+C:\Users\Szymon\Desktop\portfolio\Code\c#\CansoleApp\Adventure-game\obj\Debug\net9.0\ref\Adventure-game.dll
