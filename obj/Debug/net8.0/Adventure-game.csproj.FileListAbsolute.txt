@@ -1,0 +1,15 @@
+C:\Users\kaspe\Desktop\Project\Adventure-game\bin\Debug\net8.0\Adventure-game.exe
+C:\Users\kaspe\Desktop\Project\Adventure-game\bin\Debug\net8.0\Adventure-game.deps.json
+C:\Users\kaspe\Desktop\Project\Adventure-game\bin\Debug\net8.0\Adventure-game.runtimeconfig.json
+C:\Users\kaspe\Desktop\Project\Adventure-game\bin\Debug\net8.0\Adventure-game.dll
+C:\Users\kaspe\Desktop\Project\Adventure-game\bin\Debug\net8.0\Adventure-game.pdb
+C:\Users\kaspe\Desktop\Project\Adventure-game\obj\Debug\net8.0\Adventure-game.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\kaspe\Desktop\Project\Adventure-game\obj\Debug\net8.0\Adventure-game.AssemblyInfoInputs.cache
+C:\Users\kaspe\Desktop\Project\Adventure-game\obj\Debug\net8.0\Adventure-game.AssemblyInfo.cs
+C:\Users\kaspe\Desktop\Project\Adventure-game\obj\Debug\net8.0\Adventure-game.csproj.CoreCompileInputs.cache
+C:\Users\kaspe\Desktop\Project\Adventure-game\obj\Debug\net8.0\Adventure-game.sourcelink.json
+C:\Users\kaspe\Desktop\Project\Adventure-game\obj\Debug\net8.0\Adventure-game.dll
+C:\Users\kaspe\Desktop\Project\Adventure-game\obj\Debug\net8.0\refint\Adventure-game.dll
+C:\Users\kaspe\Desktop\Project\Adventure-game\obj\Debug\net8.0\Adventure-game.pdb
+C:\Users\kaspe\Desktop\Project\Adventure-game\obj\Debug\net8.0\Adventure-game.genruntimeconfig.cache
+C:\Users\kaspe\Desktop\Project\Adventure-game\obj\Debug\net8.0\ref\Adventure-game.dll
