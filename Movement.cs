@@ -1,5 +1,6 @@
 using System;
 using System.Threading;
+using static Fireworks;
 
 public static class Movement
 {
@@ -45,7 +46,7 @@ public static class Movement
             return;
         }
 
-       if (target == 't' || target == 'B' || target == 'K')
+      if (target == 't' || target == 'B' || target == 'K' || target == 'o') 
         {
             if (target == 't') player.AddItem("Wood");
             else if (target == 'B') player.AddItem("Bacon");
@@ -54,8 +55,17 @@ public static class Movement
                 player.AddItem("Kilof");
                 Console.WriteLine("Podniosłeś kilof!");
             }
-            map[newY, newX] = ' ';
+            else if (target == 'o')
+            {
+                player.AddItem("Kamień");
+                Fireworks.Show();  // Pokazuje fajerwerki przy podniesieniu kamienia
+                Console.WriteLine("Gratulacje! Zebrałeś kamień i ukończyłeś grę!");
+                // Jeśli masz zmienną gameRunning, ustaw ją na false żeby zakończyć grę
+                // gameRunning = false;
+            }
+            map[newY, newX] = ' '; // Czyścimy pole po podniesieniu
         }
+
 
 
 
@@ -101,9 +111,9 @@ public static class Movement
             }
             else if (target == 'O' && player.HasItem("Kilof")) // wydobywanie kamienia tylko z kilofem
             {
-                map[y, x] = ' ';
+                map[y, x] = 'o';
                 player.AddItem("Kamień");
-                Console.WriteLine("Wydobyłeś kamień kilofem!");
+                Console.WriteLine("Wydobyłeś kamień kilofem! Teraz możesz go podnieść.");
                 break;
             }
         }
