@@ -3,7 +3,7 @@ using System.Threading;
 
 class Program
 {
-    private static Player playerInstance;
+    private static Player playerInstance = new Player(1, 5);
     public static Player GetPlayerInstance() => playerInstance;
 
     static void Main()
@@ -13,8 +13,7 @@ class Program
         bool gameRunning = true;
         bool npcInConversation = false;
 
-        Player player = new Player(1, 5);
-        playerInstance = player;
+        Player player = playerInstance;
         char[,] map = Maps.GetMap(mapIndex);
         // Inicjalizacja NPC na lewo od rzeki tylko raz
         NPC npc = new NPC(2, 5);

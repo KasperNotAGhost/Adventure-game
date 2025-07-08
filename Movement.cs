@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 
 public static class Movement
 {
@@ -44,11 +45,19 @@ public static class Movement
             return;
         }
 
-        if (target == 't' || target == 'B')
+       if (target == 't' || target == 'B' || target == 'K')
         {
-            player.AddItem(target == 't' ? "Wood" : "Bacon");
+            if (target == 't') player.AddItem("Wood");
+            else if (target == 'B') player.AddItem("Bacon");
+            else if (target == 'K')
+            {
+                player.AddItem("Kilof");
+                Console.WriteLine("Podniosłeś kilof!");
+            }
             map[newY, newX] = ' ';
         }
+
+
 
         if (player.Stamina > 0)
         {
@@ -71,24 +80,37 @@ public static class Movement
     {
         (int x, int y)[] directions = new (int, int)[]
         {
-            (player.X, player.Y - 1),
-            (player.X, player.Y + 1),
-            (player.X - 1, player.Y),
-            (player.X + 1, player.Y)
+        (player.X, player.Y - 1),
+        (player.X, player.Y + 1),
+        (player.X - 1, player.Y),
+        (player.X + 1, player.Y)
         };
 
         foreach (var (x, y) in directions)
         {
             if (x >= 0 && x < map.GetLength(1) && y >= 0 && y < map.GetLength(0))
+        {
+            char target = map[y, x];
+            
+            if (target == 'T') // ścinanie drzewa, bez kilofu (np. siekierą)
             {
-                if (map[y, x] == 'T')
-                {
-                    map[y, x] = 't';
-                    break;
-                }
+                map[y, x] = 't'; // ścięte drzewo
+                player.AddItem("Wood");
+                Console.WriteLine("Ściąłeś drzewo!");
+                break;
+            }
+            else if (target == 'O' && player.HasItem("Kilof")) // wydobywanie kamienia tylko z kilofem
+            {
+                map[y, x] = ' ';
+                player.AddItem("Kamień");
+                Console.WriteLine("Wydobyłeś kamień kilofem!");
+                break;
             }
         }
+        }
     }
+
+
 
     public static void TryDropItem(Player player, char[,] map)
     {
@@ -157,4 +179,5 @@ public static class Movement
             }
         }
     }
+
 }

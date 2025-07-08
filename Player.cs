@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 
 public class Player
 {
@@ -27,4 +28,9 @@ public class Player
     {
         Inventory.Remove(item);
     }
+    public bool HasItem(string item)
+    {
+    return Inventory.Contains(item);
+    }
+
 }
