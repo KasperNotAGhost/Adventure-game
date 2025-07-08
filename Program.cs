@@ -3,6 +3,9 @@ using System.Threading;
 
 class Program
 {
+    private static Player playerInstance;
+    public static Player GetPlayerInstance() => playerInstance;
+
     static void Main()
     {
         Console.CursorVisible = false;
@@ -11,10 +14,10 @@ class Program
         bool npcInConversation = false;
 
         Player player = new Player(1, 5);
+        playerInstance = player;
         char[,] map = Maps.GetMap(mapIndex);
-        
-        // Inicjalizacja NPC jako "pustego" (poza mapą)
-        NPC npc = new NPC(-1, -1);
+        // Inicjalizacja NPC na lewo od rzeki tylko raz
+        NPC npc = new NPC(2, 5);
 
         BaconSpawner.SpawnBaconRandomly(); // losowy boczek
 
@@ -23,12 +26,7 @@ class Program
             map = Maps.GetMap(mapIndex);
 
             // Aktualizacja NPC przy zmianie mapy
-            if (mapIndex == 0)
-            {
-                npc.X = 2;
-                npc.Y = 5;
-            }
-            else
+            if (mapIndex != 0)
             {
                 // Ukryj NPC poza mapą, by nie był widoczny i nie generował błędów
                 npc.X = -1;
@@ -66,13 +64,9 @@ class Program
 
                 if (npcInConversation)
                 {
-                    // Wyjście z rozmowy przy dowolnym wciśnięciu klawisza (np. E lub Esc)
-                    if (key == ConsoleKey.E || key == ConsoleKey.Escape)
-                    {
-                        npcInConversation = false;
-                        Movement.MovePlayerToNearestFreeTile(player, map);
-                    }
-                    // W trakcie rozmowy ignorujemy inne klawisze
+                    // Wyjście z rozmowy przy dowolnym wciśnięciu klawisza
+                    npcInConversation = false;
+                    Movement.MovePlayerToNearestFreeTile(player, map);
                     continue;
                 }
 
@@ -92,6 +86,7 @@ class Program
                         break;
                     default:
                         Movement.MovePlayer(key, player, ref mapIndex, ref gameRunning);
+                        npc.TryMoveRandomly(map); // Dodano ruch NPC po ruchu gracza
                         break;
                 }
             }
